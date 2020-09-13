@@ -62,7 +62,7 @@ function decipher(text, processedPinyin, pinyinBuffer, usedLetters, currentPos) 
         count = 0;
         return;
     } else {
-        if (count > 1000) {
+        if (count > 10000) {
             postMessage([false, processedPinyin + pinyinBuffer + text, count]);
             count = 0;
         }

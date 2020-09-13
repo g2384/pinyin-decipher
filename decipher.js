@@ -23,14 +23,6 @@ const validCombos = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj",
 
 const shortestPinyin = ["a", "e", "o", "ai", "an", "ba", "bi", "bo", "bu", "ca", "ce", "ci", "cu", "da", "de", "di", "du", "ei", "en", "er", "fa", "fo", "fu", "ga", "ge", "gu", "ha", "he", "hu", "ji", "ju", "ka", "ke", "ku", "la", "le", "li", "lo", "lu", "lv", "ma", "me", "mi", "mo", "mu", "na", "ne", "ni", "nu", "nv", "ou", "pa", "pi", "po", "pu", "qi", "qu", "re", "ri", "ru", "sa", "se", "si", "su", "ta", "te", "ti", "tu", "wa", "wo", "wu", "xi", "xu", "ya", "ye", "yi", "yo", "yu", "za", "ze", "zi", "zu", "ang", "bai", "ban", "bei", "ben", "bin", "cai", "can", "cen", "cha", "che", "chi", "chu", "cou", "cui", "cun", "dai", "dan", "dei", "den", "diu", "dou", "dui", "dun", "fan", "fei", "fen", "fou", "gai", "gan", "gei", "gen", "gou", "gui", "gun", "hai", "han", "hei", "hen", "hou", "hui", "hun", "jin", "jiu", "jun", "kai", "kan", "kei", "ken", "kou", "kui", "kun", "lai", "lan", "lei", "lin", "liu", "lou", "lun", "mai", "man", "mei", "men", "min", "miu", "mou", "nai", "nan", "nei", "nen", "nin", "niu", "pai", "pan", "pei", "pen", "pin", "pou", "qin", "qiu", "qun", "ran", "rao", "ren", "rou", "rui", "run", "sai", "san", "sen", "sha", "she", "shi", "shu", "sou", "sui", "sun", "tai", "tan", "tou", "tui", "tun", "wai", "wan", "wei", "wen", "xin", "xiu", "xun", "yan", "yin", "you", "yun", "zai", "zan", "zei", "zen", "zha", "zhe", "zhi", "zhu", "zou", "zui", "zun", "bang", "beng", "bing", "cang", "ceng", "chai", "chan", "chen", "chou", "chui", "chun", "cong", "dang", "deng", "ding", "dong", "fang", "feng", "gang", "geng", "gong", "hang", "heng", "hong", "jing", "kang", "keng", "kong", "lang", "leng", "ling", "long", "mang", "meng", "ming", "nang", "neng", "ning", "nong", "pang", "peng", "ping", "qing", "rang", "reng", "rong", "sang", "seng", "shai", "shan", "shei", "shen", "shou", "shui", "shun", "song", "tang", "teng", "ting", "tong", "wang", "weng", "xing", "yang", "ying", "yong", "zang", "zeng", "zhai", "zhan", "zhei", "zhen", "zhou", "zhui", "zhun", "zong", "chang", "cheng", "chong", "jiong", "qiong", "shang", "sheng", "xiong", "zhang", "zheng", "zhong"];
 
-const validLetters = [
-    ["a", "b", "c", "d", "e", "f", "g", "h", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "w", "x", "y", "z"],
-    ["a", "e", "h", "i", "n", "o", "r", "u", "v"],
-    ["a", "e", "g", "i", "n", "o", "u"],
-    ["g", "i", "n", "u"],
-    ["g"]
-];
-
 const linkedLookUp = {
     "": ["a", "e", "o", "b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "w", "x", "y", "z"],
     "a": ["i", "n"],
@@ -216,8 +208,6 @@ const linkedLookUp = {
     "zhen": ["g"],
     "zhon": ["g"]
 };
-
-const maxLetterPos = 5; // validLetters.length
 
 var count = 0;
 var quickSkip;

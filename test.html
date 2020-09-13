@@ -64,7 +64,7 @@
         var dict = {};
         for (var i = 0; i < pp.length; i++) {
             var word = pp[i];
-            for (var j = 0; j < word.length; j++) {
+            for (var j = 0; j <= word.length; j++) {
                 var key = word.slice(0, j);
                 if (!dict.hasOwnProperty(key)) {
                     dict[key] = Array.from(getLinkedValues(pp, key));

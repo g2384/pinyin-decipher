@@ -10,17 +10,15 @@ body {
     display: inline-block;
 }
 
-#progressContainer,
-#countContainer {
+#progressContainer, #countContainer {
     display: none;
 }
 
-#count {
+#count, #foundCount {
     display: inline;
 }
 
-#result,
-#progress {
+#result, #progress {
     word-break: break-all;
 }
 

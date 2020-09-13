@@ -28,37 +28,83 @@
         console.log(valid.join(", "));
         console.log(invalid.join(", "));
 
+        pp = getShortestPinyin(pp, pp2);
 
+        getLinkedLookUpTable(pp);
+
+        getNthLetter(pp);
+    }
+
+    function startsWith(arr, text) {
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i].indexOf(text) == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function getLinkedValues(pp, key) {
+        var set = new Set();
+        for (var i = 0; i < pp.length; i++) {
+            var word = pp[i];
+            if (word.startsWith(key)) {
+                if (word.length == key.length) {
+                    set.add("");
+                }
+                else {
+                    set.add(word[key.length]);
+                }
+            }
+        }
+        return set;
+    }
+
+    function getLinkedLookUpTable(pp) {
+        var dict = {};
+        for (var i = 0; i < pp.length; i++) {
+            var word = pp[i];
+            for (var j = 0; j < word.length; j++) {
+                var key = word.slice(0, j);
+                if (!dict.hasOwnProperty(key)) {
+                    dict[key] = Array.from(getLinkedValues(pp, key));
+                }
+            }
+        }
+        console.log(JSON.stringify(dict));
+    }
+
+    function getNthLetter(pp) {
+        for (var j = 0; j < 6; j++) {
+            let set = new Set();
+            for (var i = 0; i < pp.length; i++) {
+                if (pp[i].length > j) {
+                    set.add(pp[i][j]);
+                }
+            }
+            var arr = Array.from(set);
+            arr.sort()
+            console.log(arr.join(", "));
+        }
+    }
+
+    function getShortestPinyin(pp, pp2) {
         for (var i = 0; i < pp2.length; i++) {
             var index = pp.indexOf(pp2[i]);
             if (index >= 0) {
                 pp[index] = "";
             }
         }
+        pp = pp.filter(e => e != "");
         console.log(pp.join(", "));
-
-
-        for (var j = 0; j < 6; j++) {
-            var result = "";
-            for (var i = 0; i < pp.length; i++) {
-                if (pp[i].length > j) {
-                    result += pp[i][j] + " ";
-                }
-            }
-            console.log(result);
-        }
-
+        return pp;
     }
 
     function findAllCombo(array1, array2) {
-        combos = [] //or combos = new Array(2);
+        combos = []
 
         for (var i = 0; i < array1.length; i++) {
             for (var j = 0; j < array2.length; j++) {
-                //you would access the element of the array as array1[i] and array2[j]
-                //create and array with as many elements as the number of arrays you are to combine
-                //add them in
-                //you could have as many dimensions as you need
                 combos.push(array1[i] + array2[j])
             }
         }

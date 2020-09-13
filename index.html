@@ -1,0 +1,116 @@
+<html>
+<header>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <title>拼音密码破解</title>
+  <link rel="stylesheet" href="styles.css"/>
+</header>
+
+<body>
+  <h3>拼音密码破解</h3>
+  <p>暴力破解拼音字母替换的密码</p>
+  <p class="small">因ng, eng, hng, nou过于罕见，不考虑</p>
+  <p class="small">仅支持Chrome >= 85，Firefox >= 77，Safari >= 13.1，Android webview >= 85，Safari on iOS >= 13.4</p>
+  <div>
+    <p>密文：（不区分大小写）</p>
+    <textarea id="inputText">love</textarea>
+    <p>已知的替换：（选填，左侧为密文里出现的字母，右侧为明文里出现的字母）</p>
+    <div id="knownKeys"></div>
+    <div>快速破解：<input type="text" id='fastSearch' />（仅破解选定的密文）</div>
+    <input type="button" class="btn" onclick="start();" value="开始" />
+  </div>
+
+  <div id="countContainer">已检查：
+    <div id="count"></div>组
+  </div>
+  <div id="progressContainer">Checking: <div id="progress"></div>
+  </div>
+  <hr>
+  <div id="result"></div>
+  <script>
+    const alpha2 = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
+
+    function setUI() {
+      var knownKeys = document.getElementById("knownKeys");
+      var html = "";
+      alpha2.forEach(function (v, i) {
+        html += "<div class='inlineBlock'>" + v + ": <input type='text' class='key' maxLength='1' id='i_" + v + "'/></div>"
+      });
+      knownKeys.innerHTML = html;
+    }
+    setUI();
+
+    var progressArea = document.getElementById("progress");
+    var countArea = document.getElementById("count");
+    var resultDiv = document.getElementById("result");
+    var fastSearchText = document.getElementById("fastSearch");
+
+    if ("function" !== typeof window.Worker) {
+      throw "Your browser doesn't support Web Workers";
+    }
+
+    var thread = new Worker("decipher.js");
+    thread.onmessage = function (e) {
+      [isValid, text, curr_c] = e.data;
+      if (isValid) {
+        if (text == "!") {
+          document.getElementById("progressContainer").style.display = "none";
+        } else {
+          var text2 = text.replaceAll(" ", "");
+          if (deciphered.indexOf(text2) < 0) {
+            deciphered.push(text2);
+            resultDiv.innerHTML += text + "<br>";
+          }
+        }
+      }
+      else {
+        progressArea.innerHTML = text;
+      }
+      count += curr_c;
+      countArea.innerHTML = count;
+    };
+
+    thread.onerror = function (e) {
+      console.log(e);
+    };
+
+    var count = 0;
+    var deciphered = [];
+    var fastSearchStartIndex, fastSearchEndIndex;
+
+    function start() {
+      document.getElementById("progressContainer").style.display = "block";
+      document.getElementById("countContainer").style.display = "block";
+      count = 0;
+      deciphered = [];
+      resultDiv.innerHTML = "";
+      progressArea.innerHTML = count;
+      var fs_Text = fastSearchText.value;
+      console.log("start");
+      var keys = getKeys();
+      var text = document.getElementById("inputText").value;
+      fastSearchStartIndex = text.indexOf(fs_Text);
+      if (fastSearchStartIndex < 0) {
+        fastSearchStartIndex = 0;
+      }
+      fastSearchEndIndex = fastSearchStartIndex + fs_Text.length - 1;
+      if (fastSearchEndIndex >= text.length) {
+        fastSearchEndIndex = text.length - 1;
+      }
+      thread.postMessage([text, keys, fastSearchStartIndex, fastSearchEndIndex]);
+    }
+
+    function getKeys() {
+      var keys = {}
+      alpha2.forEach(function (v, i) {
+        var key = document.getElementById("i_" + v).value;
+        if (key != null && key != undefined && key.length > 0) {
+          keys[v.toLowerCase()] = key;
+        }
+      });
+      return keys;
+    }
+  </script>
+</body>
+
+</html>

@@ -227,7 +227,7 @@ function decipher(text, processedPinyin, pinyinBuffer, usedLetters, currentPos) 
         if (currentPos == fastSearchEndIndex) {
             quickSkip = false;
         }
-        else if (currentPos <= fastSearchEndIndex + 1) {
+        else if (currentPos <= fastSearchEndIndex) {
             quickSkip = false;
             return;
         } else {
@@ -240,7 +240,7 @@ function decipher(text, processedPinyin, pinyinBuffer, usedLetters, currentPos) 
     if (text.length == 0) {
         // all finished
         if (pinyinBuffer.length == 0) {
-            quickSkip = true && fastSearchEndIndex >= 0;
+            quickSkip = true && fastSearchEndIndex >= 0 && currentPos > (fastSearchEndIndex + 1);
             postMessage([true, processedPinyin, count]);
         }
         else {

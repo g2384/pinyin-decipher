@@ -20,7 +20,7 @@
     <input type="button" class="btn" onclick="start();" value="开始" />
   </div>
 
-  <div id="countContainer">已检查<div id="count"></div>组，发现<div id="foundCount"></div>组
+  <div id="countContainer">已检查<div id="count"></div>组，发现<div id="foundCount"></div>组，用时<div id="timeElapsed"></div>
   </div>
   <div id="progressContainer">Checking: <div id="progress"></div>
   </div>
@@ -44,6 +44,7 @@
     var resultDiv = document.getElementById("result");
     var fastSearchText = document.getElementById("fastSearch");
     var foundCountArea = document.getElementById("foundCount");
+    let timeElapsedArea = document.getElementById("timeElapsed");
 
     if ("function" !== typeof window.Worker) {
       throw "Your browser doesn't support Web Workers";
@@ -65,11 +66,11 @@
           }
         }
       }
-      else {
-        progressArea.innerHTML = text;
-      }
+      progressArea.innerHTML = text;
+      var t1 = performance.now();
       count += curr_c;
       countArea.innerHTML = count;
+      timeElapsed.innerHTML = Math.round(t1 - time_start) / 1000 + "s";
     };
 
     thread.onerror = function (e) {
@@ -80,6 +81,7 @@
     var foundCount = 0;
     var deciphered = [];
     var fastSearchStartIndex, fastSearchEndIndex;
+    let time_start;
 
     function start() {
       document.getElementById("progressContainer").style.display = "block";
@@ -89,6 +91,7 @@
       deciphered = [];
       resultDiv.innerHTML = "";
       progressArea.innerHTML = count;
+      foundCountArea.innerHTML = foundCount;
       var fs_Text = fastSearchText.value;
       console.log("start");
       var keys = getKeys();
@@ -101,6 +104,7 @@
       if (fastSearchEndIndex >= text.length) {
         fastSearchEndIndex = text.length - 1;
       }
+      time_start = performance.now();
       thread.postMessage([text, keys, fastSearchStartIndex, fastSearchEndIndex]);
     }
 

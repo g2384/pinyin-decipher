@@ -232,11 +232,8 @@ function decipher(text, processedPinyin, pinyinBuffer, usedLetters, currentPos) 
         if (pinyinBuffer.length == 0) {
             quickSkip = true && fastSearchEndIndex >= 0 && currentPos > (fastSearchEndIndex + 1);
             postMessage([true, processedPinyin, count]);
+            count = 0;
         }
-        else {
-            postMessage([false, processedPinyin + pinyinBuffer + text, count]);
-        }
-        count = 0;
         return;
     } else {
         if (count > 10000) {
@@ -245,55 +242,42 @@ function decipher(text, processedPinyin, pinyinBuffer, usedLetters, currentPos) 
         }
     }
 
-    var currentChar = text[0];
+    let currentChar = text[0];
 
     if (isCapital(currentChar)) {
-        var letters = linkedLookUp[pinyinBuffer];
+        let letters = linkedLookUp[pinyinBuffer];
         if (letters == undefined) {
             return;
         }
         letters = letters.filter((el) => !usedLetters.includes(el));
 
-        for (var i = 0; i < letters.length; i++) {
-            var currentLetter = letters[i];
-            var text2 = text.replaceAll(currentChar, currentLetter);
+        for (let i = 0; i < letters.length; i++) {
+            let currentLetter = letters[i];
+            let text2 = text.replaceAll(currentChar, currentLetter);
             if (hasInvalidCombos(text2)) {
                 continue;
             }
-            var usedLetters2 = usedLetters + currentLetter;
+            let usedLetters2 = usedLetters + currentLetter;
             decipher(text2, processedPinyin, pinyinBuffer, usedLetters2, textLength - text2.length);
         }
     }
     else {
         pinyinBuffer += currentChar;
+        currentPos++;
+        var text2 = text.slice(1);
+        if (linkedLookUp[pinyinBuffer] != undefined) {
+            decipher(text2, processedPinyin, pinyinBuffer, usedLetters, currentPos);
+        }
         if (shortestPinyin.includes(pinyinBuffer)) {
-            currentPos++;
-            decipher(text.slice(1), processedPinyin, pinyinBuffer, usedLetters, currentPos);
-
             processedPinyin += pinyinBuffer + " ";
-            decipher(text.slice(1), processedPinyin, "", usedLetters, currentPos);
+            decipher(text2, processedPinyin, "", usedLetters, currentPos);
         }
-        else {
-            if (hasPinyinStartsWith(pinyinBuffer)) {
-                currentPos++;
-                decipher(text.slice(1), processedPinyin, pinyinBuffer, usedLetters, currentPos);
-            }
-            return;
-        }
+        return;
     }
-}
-
-function hasPinyinStartsWith(text) {
-    for (var i = 0; i < shortestPinyin.length; i++) {
-        if (shortestPinyin[i].indexOf(text) == 0) {
-            return true;
-        }
-    }
-    return false;
 }
 
 function hasInvalidCombos(text) {
-    for (var i = 0; i < invalidCombos.length; i++) {
+    for (let i = 0; i < invalidCombos.length; i++) {
         if (text.includes(invalidCombos[i])) {
             return true;
         }
@@ -302,6 +286,6 @@ function hasInvalidCombos(text) {
 }
 
 function isCapital(c) {
-    var code = c.charCodeAt();
+    let code = c.charCodeAt();
     return code >= 65 && code <= 90;
 }

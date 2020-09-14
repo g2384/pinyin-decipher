@@ -14,7 +14,7 @@ body {
     display: none;
 }
 
-#count, #foundCount {
+#count, #foundCount, #timeElapsed {
     display: inline;
 }
 

@@ -1,6 +1,8 @@
 onmessage = function (e) {
     let text: string;
     let key: any;
+    let fastSearchStartIndex: number;
+    let fastSearchEndIndex: number;
     [text, key, fastSearchStartIndex, fastSearchEndIndex] = e.data;
     console.log("Decipher: " + text);
     text = text.toUpperCase();
@@ -10,12 +12,27 @@ onmessage = function (e) {
         text = replaceAll(text, keys[i].toUpperCase(), key[keys[i]]);
         usedLetters += key[keys[i]];
     }
-    textLength = text.length;
-    decipher(text, "", "", usedLetters, 0, postMessage);
-    postMessage([true, "!", count]);
+
+    let settings = new Settings(text, fastSearchStartIndex, fastSearchEndIndex);
+    decipher(text, "", "", usedLetters, 0, settings, postMessage);
+    postMessage([true, "!", settings.count]);
 };
 
-var fastSearchStartIndex: number, fastSearchEndIndex: number, textLength: number;
+export class Settings {
+    public originalTextLength: number;
+    public fastSearchStartIndex: number;
+    public fastSearchEndIndex: number;
+    public count: number = 0;
+    public quickSkip: boolean;
+
+    public constructor(text: string, fastStartIndex: number, fastEndIndex: number) {
+        this.originalTextLength = text.length;
+        this.fastSearchStartIndex = fastStartIndex;
+        this.fastSearchEndIndex = fastEndIndex;
+        this.count = 0;
+        this.quickSkip = false;
+    }
+}
 
 const alpha: string[] = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
 
@@ -211,36 +228,33 @@ const linkedLookUp: { [key: string]: string[] } = {
     "zhon": ["g"]
 };
 
-var count = 0;
-var quickSkip: boolean;
-
-export function decipher(text: string, processedPinyin: string, pinyinBuffer: string, usedLetters: string, currentPos: number, print: any): void {
-    if (quickSkip) {
-        if (currentPos == fastSearchEndIndex) {
-            quickSkip = false;
+export function decipher(text: string, processedPinyin: string, pinyinBuffer: string, usedLetters: string, currentPos: number, settings: Settings, print: any): void {
+    if (settings.quickSkip) {
+        if (currentPos == settings.fastSearchEndIndex) {
+            settings.quickSkip = false;
         }
-        else if (currentPos <= fastSearchEndIndex) {
-            quickSkip = false;
+        else if (currentPos <= settings.fastSearchEndIndex) {
+            settings.quickSkip = false;
             return;
         } else {
             return;
         }
     }
 
-    count++;
+    settings.count++;
 
     if (text.length == 0) {
         // all finished
         if (pinyinBuffer.length == 0) {
-            quickSkip = true && fastSearchEndIndex >= 0 && currentPos > (fastSearchEndIndex + 1);
-            print([true, processedPinyin, count]);
-            count = 0;
+            settings.quickSkip = true && settings.fastSearchEndIndex >= 0 && currentPos > (settings.fastSearchEndIndex + 1);
+            print([true, processedPinyin, settings.count]);
+            settings.count = 0;
         }
         return;
     } else {
-        if (count > 10000) {
-            print([false, processedPinyin + pinyinBuffer + text, count]);
-            count = 0;
+        if (settings.count > 10000) {
+            print([false, processedPinyin + pinyinBuffer + text, settings.count]);
+            settings.count = 0;
         }
     }
 
@@ -260,7 +274,7 @@ export function decipher(text: string, processedPinyin: string, pinyinBuffer: st
                 continue;
             }
             let usedLetters2 = usedLetters + currentLetter;
-            decipher(text2, processedPinyin, pinyinBuffer, usedLetters2, textLength - text2.length, print);
+            decipher(text2, processedPinyin, pinyinBuffer, usedLetters2, settings.originalTextLength - text2.length, settings, print);
         }
     }
     else {
@@ -268,11 +282,11 @@ export function decipher(text: string, processedPinyin: string, pinyinBuffer: st
         currentPos++;
         var text2 = text.slice(1);
         if (linkedLookUp[pinyinBuffer] != undefined) {
-            decipher(text2, processedPinyin, pinyinBuffer, usedLetters, currentPos, print);
+            decipher(text2, processedPinyin, pinyinBuffer, usedLetters, currentPos, settings, print);
         }
         if (shortestPinyin.includes(pinyinBuffer)) {
             processedPinyin += pinyinBuffer + " ";
-            decipher(text2, processedPinyin, "", usedLetters, currentPos, print);
+            decipher(text2, processedPinyin, "", usedLetters, currentPos, settings, print);
         }
         return;
     }

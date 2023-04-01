@@ -1,6 +1,9 @@
+"use strict";
 onmessage = function (e) {
     let text;
     let key;
+    let fastSearchStartIndex;
+    let fastSearchEndIndex;
     [text, key, fastSearchStartIndex, fastSearchEndIndex] = e.data;
     console.log("Decipher: " + text);
     text = text.toUpperCase();
@@ -10,11 +13,20 @@ onmessage = function (e) {
         text = replaceAll(text, keys[i].toUpperCase(), key[keys[i]]);
         usedLetters += key[keys[i]];
     }
-    textLength = text.length;
-    decipher(text, "", "", usedLetters, 0, postMessage);
-    postMessage([true, "!", count]);
+    let settings = new Settings(text, fastSearchStartIndex, fastSearchEndIndex);
+    decipher(text, "", "", usedLetters, 0, settings, postMessage);
+    postMessage([true, "!", settings.count]);
 };
-var fastSearchStartIndex, fastSearchEndIndex, textLength;
+class Settings {
+    constructor(text, fastStartIndex, fastEndIndex) {
+        this.count = 0;
+        this.originalTextLength = text.length;
+        this.fastSearchStartIndex = fastStartIndex;
+        this.fastSearchEndIndex = fastEndIndex;
+        this.count = 0;
+        this.quickSkip = false;
+    }
+}
 const alpha = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
 const invalidCombos = ["au", "av", "bb", "bc", "bd", "bf", "bg", "bh", "bj", "bk", "bl", "bm", "bn", "bp", "bq", "br", "bs", "bt", "bv", "bw", "bx", "by", "bz", "cb", "cc", "cd", "cf", "cg", "cj", "ck", "cl", "cm", "cn", "cp", "cq", "cr", "cs", "ct", "cv", "cw", "cx", "cy", "cz", "db", "dc", "dd", "df", "dg", "dh", "dj", "dk", "dl", "dm", "dn", "dp", "dq", "dr", "ds", "dt", "dv", "dw", "dx", "dy", "dz", "eu", "ev", "fb", "fc", "fd", "ff", "fg", "fh", "fi", "fj", "fk", "fl", "fm", "fn", "fp", "fq", "fr", "fs", "ft", "fv", "fw", "fx", "fy", "fz", "gi", "gv", "hb", "hc", "hd", "hf", "hg", "hh", "hj", "hk", "hl", "hm", "hp", "hq", "hr", "hs", "ht", "hv", "hw", "hx", "hy", "hz", "ii", "iv", "ja", "jb", "jc", "jd", "je", "jf", "jg", "jh", "jj", "jk", "jl", "jm", "jn", "jo", "jp", "jq", "jr", "js", "jt", "jv", "jw", "jx", "jy", "jz", "kb", "kc", "kd", "kf", "kg", "kh", "ki", "kj", "kk", "kl", "km", "kn", "kp", "kq", "kr", "ks", "kt", "kv", "kw", "kx", "ky", "kz", "lb", "lc", "ld", "lf", "lg", "lh", "lj", "lk", "ll", "lm", "ln", "lp", "lq", "lr", "ls", "lt", "lw", "lx", "ly", "lz", "mb", "mc", "md", "mf", "mg", "mh", "mj", "mk", "ml", "mm", "mn", "mp", "mq", "mr", "ms", "mt", "mv", "mw", "mx", "my", "mz", "oi", "ov", "pb", "pc", "pd", "pf", "pg", "ph", "pj", "pk", "pl", "pm", "pn", "pp", "pq", "pr", "ps", "pt", "pv", "pw", "px", "py", "pz", "qa", "qb", "qc", "qd", "qe", "qf", "qg", "qh", "qj", "qk", "ql", "qm", "qn", "qo", "qp", "qq", "qr", "qs", "qt", "qv", "qw", "qx", "qy", "qz", "rv", "sb", "sc", "sd", "sf", "sg", "sj", "sk", "sl", "sm", "sn", "sp", "sq", "sr", "ss", "st", "sv", "sw", "sx", "sy", "sz", "tb", "tc", "td", "tf", "tg", "th", "tj", "tk", "tl", "tm", "tn", "tp", "tq", "tr", "ts", "tt", "tv", "tw", "tx", "ty", "tz", "uu", "uv", "vi", "vu", "vv", "wb", "wc", "wd", "wf", "wg", "wh", "wi", "wj", "wk", "wl", "wm", "wn", "wp", "wq", "wr", "ws", "wt", "wv", "ww", "wx", "wy", "wz", "xa", "xb", "xc", "xd", "xe", "xf", "xg", "xh", "xj", "xk", "xl", "xm", "xn", "xo", "xp", "xq", "xr", "xs", "xt", "xv", "xw", "xx", "xy", "xz", "yb", "yc", "yd", "yf", "yg", "yh", "yj", "yk", "yl", "ym", "yn", "yp", "yq", "yr", "ys", "yt", "yv", "yw", "yx", "yy", "yz", "zb", "zc", "zd", "zf", "zg", "zj", "zk", "zl", "zm", "zn", "zp", "zq", "zr", "zs", "zt", "zv", "zw", "zx", "zy", "zz"];
 const validCombos = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "aw", "ax", "ay", "az", "ba", "be", "bi", "bo", "bu", "ca", "ce", "ch", "ci", "co", "cu", "da", "de", "di", "do", "du", "ea", "eb", "ec", "ed", "ee", "ef", "eg", "eh", "ei", "ej", "ek", "el", "em", "en", "eo", "ep", "eq", "er", "es", "et", "ew", "ex", "ey", "ez", "fa", "fe", "fo", "fu", "ga", "gb", "gc", "gd", "ge", "gf", "gg", "gh", "gj", "gk", "gl", "gm", "gn", "go", "gp", "gq", "gr", "gs", "gt", "gu", "gw", "gx", "gy", "gz", "ha", "he", "hi", "hn", "ho", "hu", "ia", "ib", "ic", "id", "ie", "if", "ig", "ih", "ij", "ik", "il", "im", "in", "io", "ip", "iq", "ir", "is", "it", "iu", "iw", "ix", "iy", "iz", "ji", "ju", "ka", "ke", "ko", "ku", "la", "le", "li", "lo", "lu", "lv", "ma", "me", "mi", "mo", "mu", "na", "nb", "nc", "nd", "ne", "nf", "ng", "nh", "ni", "nj", "nk", "nl", "nm", "nn", "no", "np", "nq", "nr", "ns", "nt", "nu", "nv", "nw", "nx", "ny", "nz", "oa", "ob", "oc", "od", "oe", "of", "og", "oh", "oj", "ok", "ol", "om", "on", "oo", "op", "oq", "or", "os", "ot", "ou", "ow", "ox", "oy", "oz", "pa", "pe", "pi", "po", "pu", "qi", "qu", "ra", "rb", "rc", "rd", "re", "rf", "rg", "rh", "ri", "rj", "rk", "rl", "rm", "rn", "ro", "rp", "rq", "rr", "rs", "rt", "ru", "rw", "rx", "ry", "rz", "sa", "se", "sh", "si", "so", "su", "ta", "te", "ti", "to", "tu", "ua", "ub", "uc", "ud", "ue", "uf", "ug", "uh", "ui", "uj", "uk", "ul", "um", "un", "uo", "up", "uq", "ur", "us", "ut", "uw", "ux", "uy", "uz", "va", "vb", "vc", "vd", "ve", "vf", "vg", "vh", "vj", "vk", "vl", "vm", "vn", "vo", "vp", "vq", "vr", "vs", "vt", "vw", "vx", "vy", "vz", "wa", "we", "wo", "wu", "xi", "xu", "ya", "ye", "yi", "yo", "yu", "za", "ze", "zh", "zi", "zo", "zu"];
@@ -204,35 +216,33 @@ const linkedLookUp = {
     "zhen": ["g"],
     "zhon": ["g"]
 };
-var count = 0;
-var quickSkip;
-export function decipher(text, processedPinyin, pinyinBuffer, usedLetters, currentPos, print) {
-    if (quickSkip) {
-        if (currentPos == fastSearchEndIndex) {
-            quickSkip = false;
+function decipher(text, processedPinyin, pinyinBuffer, usedLetters, currentPos, settings, print) {
+    if (settings.quickSkip) {
+        if (currentPos == settings.fastSearchEndIndex) {
+            settings.quickSkip = false;
         }
-        else if (currentPos <= fastSearchEndIndex) {
-            quickSkip = false;
+        else if (currentPos <= settings.fastSearchEndIndex) {
+            settings.quickSkip = false;
             return;
         }
         else {
             return;
         }
     }
-    count++;
+    settings.count++;
     if (text.length == 0) {
         // all finished
         if (pinyinBuffer.length == 0) {
-            quickSkip = true && fastSearchEndIndex >= 0 && currentPos > (fastSearchEndIndex + 1);
-            print([true, processedPinyin, count]);
-            count = 0;
+            settings.quickSkip = true && settings.fastSearchEndIndex >= 0 && currentPos > (settings.fastSearchEndIndex + 1);
+            print([true, processedPinyin, settings.count]);
+            settings.count = 0;
         }
         return;
     }
     else {
-        if (count > 10000) {
-            print([false, processedPinyin + pinyinBuffer + text, count]);
-            count = 0;
+        if (settings.count > 10000) {
+            print([false, processedPinyin + pinyinBuffer + text, settings.count]);
+            settings.count = 0;
         }
     }
     let currentChar = text[0];
@@ -249,7 +259,7 @@ export function decipher(text, processedPinyin, pinyinBuffer, usedLetters, curre
                 continue;
             }
             let usedLetters2 = usedLetters + currentLetter;
-            decipher(text2, processedPinyin, pinyinBuffer, usedLetters2, textLength - text2.length, print);
+            decipher(text2, processedPinyin, pinyinBuffer, usedLetters2, settings.originalTextLength - text2.length, settings, print);
         }
     }
     else {
@@ -257,19 +267,19 @@ export function decipher(text, processedPinyin, pinyinBuffer, usedLetters, curre
         currentPos++;
         var text2 = text.slice(1);
         if (linkedLookUp[pinyinBuffer] != undefined) {
-            decipher(text2, processedPinyin, pinyinBuffer, usedLetters, currentPos, print);
+            decipher(text2, processedPinyin, pinyinBuffer, usedLetters, currentPos, settings, print);
         }
         if (shortestPinyin.includes(pinyinBuffer)) {
             processedPinyin += pinyinBuffer + " ";
-            decipher(text2, processedPinyin, "", usedLetters, currentPos, print);
+            decipher(text2, processedPinyin, "", usedLetters, currentPos, settings, print);
         }
         return;
     }
 }
-export function replaceAll(text, find, replace) {
+function replaceAll(text, find, replace) {
     return text.replace(new RegExp(find, 'g'), replace);
 }
-export function hasInvalidCombos(text) {
+function hasInvalidCombos(text) {
     for (let i = 0; i < invalidCombos.length; i++) {
         if (text.includes(invalidCombos[i])) {
             return true;
@@ -277,7 +287,7 @@ export function hasInvalidCombos(text) {
     }
     return false;
 }
-export function isCapital(c) {
+function isCapital(c) {
     let code = c.charCodeAt(0);
     return code >= 65 && code <= 90;
 }

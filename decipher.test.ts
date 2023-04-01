@@ -1,4 +1,4 @@
-import { decipher, replaceAll } from './decipher';
+import { decipher, replaceAll, Settings } from './decipher';
 
 var collection: any = [];
 
@@ -14,7 +14,8 @@ describe("Decipher pinyin", () => {
     test('aa', () => {
         collection = [];
         let name: string = getTestName(expect);
-        decipher(name, '', '', '', 0, printCallback);
+        let settings = new Settings(name, -1, -1);
+        decipher(name, '', '', '', 0, settings, printCallback);
         expect(collection.length).toBe(1);
         expect(collection[0]).toEqual([true, 'a a ', 5])
     });
@@ -22,14 +23,16 @@ describe("Decipher pinyin", () => {
     test('aab', () => {
         collection = [];
         let name: string = getTestName(expect);
-        decipher(name, '', '', '', 0, printCallback);
+        let settings = new Settings(name, -1, -1);
+        decipher(name, '', '', '', 0, settings, printCallback);
         expect(collection.length).toBe(0);
     });
 
     test('aabb', () => {
         collection = [];
         let name: string = getTestName(expect);
-        decipher(name, '', '', '', 0, printCallback);
+        let settings = new Settings(name, -1, -1);
+        decipher(name, '', '', '', 0, settings, printCallback);
         expect(collection.length).toBe(1);
         expect(collection[0]).toEqual([true, 'a a ', 5])
     });

@@ -13,8 +13,7 @@
         "strict": true,
         "strictNullChecks": true,
         "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true,
-        "declaration": true,
+        "forceConsistentCasingInFileNames": true
     },
     "exclude": [
         "node_modules"

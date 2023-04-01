@@ -42,6 +42,8 @@ const validCombos: string[] = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "
 
 const shortestPinyin: string[] = ["a", "e", "o", "ai", "an", "ba", "bi", "bo", "bu", "ca", "ce", "ci", "cu", "da", "de", "di", "du", "ei", "en", "er", "fa", "fo", "fu", "ga", "ge", "gu", "ha", "he", "hu", "ji", "ju", "ka", "ke", "ku", "la", "le", "li", "lo", "lu", "lv", "ma", "me", "mi", "mo", "mu", "na", "ne", "ni", "nu", "nv", "ou", "pa", "pi", "po", "pu", "qi", "qu", "re", "ri", "ru", "sa", "se", "si", "su", "ta", "te", "ti", "tu", "wa", "wo", "wu", "xi", "xu", "ya", "ye", "yi", "yo", "yu", "za", "ze", "zi", "zu", "ang", "bai", "ban", "bei", "ben", "bin", "cai", "can", "cen", "cha", "che", "chi", "chu", "cou", "cui", "cun", "dai", "dan", "dei", "den", "diu", "dou", "dui", "dun", "fan", "fei", "fen", "fou", "gai", "gan", "gei", "gen", "gou", "gui", "gun", "hai", "han", "hei", "hen", "hou", "hui", "hun", "jin", "jiu", "jun", "kai", "kan", "kei", "ken", "kou", "kui", "kun", "lai", "lan", "lei", "lin", "liu", "lou", "lun", "mai", "man", "mei", "men", "min", "miu", "mou", "nai", "nan", "nei", "nen", "nin", "niu", "pai", "pan", "pei", "pen", "pin", "pou", "qin", "qiu", "qun", "ran", "rao", "ren", "rou", "rui", "run", "sai", "san", "sen", "sha", "she", "shi", "shu", "sou", "sui", "sun", "tai", "tan", "tou", "tui", "tun", "wai", "wan", "wei", "wen", "xin", "xiu", "xun", "yan", "yin", "you", "yun", "zai", "zan", "zei", "zen", "zha", "zhe", "zhi", "zhu", "zou", "zui", "zun", "bang", "beng", "bing", "cang", "ceng", "chai", "chan", "chen", "chou", "chui", "chun", "cong", "dang", "deng", "ding", "dong", "fang", "feng", "gang", "geng", "gong", "hang", "heng", "hong", "jing", "kang", "keng", "kong", "lang", "leng", "ling", "long", "mang", "meng", "ming", "nang", "neng", "ning", "nong", "pang", "peng", "ping", "qing", "rang", "reng", "rong", "sang", "seng", "shai", "shan", "shei", "shen", "shou", "shui", "shun", "song", "tang", "teng", "ting", "tong", "wang", "weng", "xing", "yang", "ying", "yong", "zang", "zeng", "zhai", "zhan", "zhei", "zhen", "zhou", "zhui", "zhun", "zong", "chang", "cheng", "chong", "jiong", "qiong", "shang", "sheng", "xiong", "zhang", "zheng", "zhong"];
 
+const allPinyin: string[] = ["a", "e", "o", "ai", "an", "ao", "ba", "bi", "bo", "bu", "ca", "ce", "ci", "cu", "da", "de", "di", "du", "ei", "en", "er", "fa", "fo", "fu", "ga", "ge", "gu", "ha", "he", "hu", "ji", "ju", "ka", "ke", "ku", "la", "le", "li", "lo", "lu", "lv", "ma", "me", "mi", "mo", "mu", "na", "ne", "ni", "nu", "nv", "ou", "pa", "pi", "po", "pu", "qi", "qu", "re", "ri", "ru", "sa", "se", "si", "su", "ta", "te", "ti", "tu", "wa", "wo", "wu", "xi", "xu", "ya", "ye", "yi", "yo", "yu", "za", "ze", "zi", "zu", "ang", "bai", "ban", "bao", "bei", "ben", "bie", "bin", "cai", "can", "cao", "cen", "cha", "che", "chi", "chu", "cou", "cui", "cun", "cuo", "dai", "dan", "dao", "dei", "den", "dia", "die", "diu", "dou", "dui", "dun", "duo", "fan", "fei", "fen", "fou", "gai", "gan", "gao", "gei", "gen", "gou", "gua", "gui", "gun", "guo", "hai", "han", "hao", "hei", "hen", "hou", "hua", "hui", "hun", "huo", "jia", "jie", "jin", "jiu", "jue", "jun", "kai", "kan", "kao", "kei", "ken", "kou", "kua", "kui", "kun", "kuo", "lai", "lan", "lao", "lei", "lia", "lie", "lin", "liu", "lou", "lve", "lun", "luo", "mai", "man", "mao", "mei", "men", "mie", "min", "miu", "mou", "nai", "nan", "nao", "nei", "nen", "nie", "nin", "niu", "nve", "nuo", "pai", "pan", "pao", "pei", "pen", "pie", "pin", "pou", "qia", "qie", "qin", "qiu", "que", "qun", "ran", "rao", "ren", "rou", "rui", "run", "ruo", "sai", "san", "sao", "sen", "sha", "she", "shi", "shu", "sou", "sui", "sun", "suo", "tai", "tan", "tao", "tie", "tou", "tui", "tun", "tuo", "wai", "wan", "wei", "wen", "xia", "xie", "xin", "xiu", "xue", "xun", "yan", "yao", "yin", "you", "yue", "yun", "zai", "zan", "zao", "zei", "zen", "zha", "zhe", "zhi", "zhu", "zou", "zui", "zun", "zuo", "bang", "beng", "bian", "biao", "bing", "cang", "ceng", "chai", "chan", "chao", "chen", "chou", "chua", "chui", "chun", "chuo", "cong", "cuan", "dang", "deng", "dian", "diao", "ding", "dong", "duan", "fang", "feng", "gang", "geng", "gong", "guai", "guan", "hang", "heng", "hong", "huai", "huan", "jian", "jiao", "jing", "juan", "kang", "keng", "kong", "kuai", "kuan", "lang", "leng", "lian", "liao", "ling", "long", "luan", "mang", "meng", "mian", "miao", "ming", "nang", "neng", "nian", "niao", "ning", "nong", "nuan", "pang", "peng", "pian", "piao", "ping", "qian", "qiao", "qing", "quan", "rang", "reng", "rong", "ruan", "sang", "seng", "shai", "shan", "shao", "shei", "shen", "shou", "shua", "shui", "shun", "shuo", "song", "suan", "tang", "teng", "tian", "tiao", "ting", "tong", "tuan", "wang", "weng", "xian", "xiao", "xing", "xuan", "yang", "ying", "yong", "yuan", "zang", "zeng", "zhai", "zhan", "zhao", "zhei", "zhen", "zhou", "zhua", "zhui", "zhun", "zhuo", "zong", "zuan", "chang", "cheng", "chong", "chuai", "chuan", "guang", "huang", "jiang", "jiong", "kuang", "liang", "niang", "qiang", "qiong", "shang", "sheng", "shuai", "shuan", "xiang", "xiong", "zhang", "zheng", "zhong", "zhuai", "zhuan", "chuang", "shuang", "zhuang"];
+
 const linkedLookUp: { [key: string]: string[] } = {
     "": ["a", "e", "o", "b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "w", "x", "y", "z"],
     "a": ["i", "n"],
@@ -228,6 +230,29 @@ const linkedLookUp: { [key: string]: string[] } = {
     "zhon": ["g"]
 };
 
+function combinePinyin(text: string): string {
+    var newPinyin: string[] = [];
+    var arr = text.trim().split(" ");
+    for (var i = 0; i < arr.length - 1; i++) {
+        var p = arr[i] + arr[i + 1];
+        if (allPinyin.includes(p)) {
+            newPinyin.push(p);
+            i++;
+        }
+        else {
+            newPinyin.push(arr[i]);
+        }
+    }
+    if (i == arr.length - 1 && arr[i].length > 0) {
+        newPinyin.push(arr[i]);
+    }
+    var str = newPinyin.join(" ") + " ";
+    if (str != text) {
+        return str;
+    }
+    return "";
+}
+
 export function decipher(text: string, processedPinyin: string, pinyinBuffer: string, usedLetters: string, currentPos: number, settings: Settings, print: any): void {
     if (settings.quickSkip) {
         if (currentPos == settings.fastSearchEndIndex) {
@@ -247,8 +272,12 @@ export function decipher(text: string, processedPinyin: string, pinyinBuffer: st
         // all finished
         if (pinyinBuffer.length == 0) {
             settings.quickSkip = true && settings.fastSearchEndIndex >= 0 && currentPos > (settings.fastSearchEndIndex + 1);
+            let combined: string = combinePinyin(processedPinyin);
             print([true, processedPinyin, settings.count]);
             settings.count = 0;
+            if (combined.length > 0) {
+                print([true, combined, 1]);
+            }
         }
         return;
     } else {

@@ -17,6 +17,7 @@
     <p>已知的替换：（选填，左侧为密文里出现的字母，右侧为明文里出现的字母）</p>
     <div id="knownKeys"></div>
     <div>跳跃破解：<input type="text" id='fastSearch' />（仅破解选定的密文）</div>
+    <div>密文包含拼音个数：<input type="number" id='pinyinCount' min="1" /></div>
     <input type="button" class="btn" onclick="start();" value="开始" />
   </div>
 
@@ -46,6 +47,7 @@
     var fastSearchText = document.getElementById("fastSearch");
     var foundCountArea = document.getElementById("foundCount");
     let timeElapsedArea = document.getElementById("timeElapsed");
+    let pinyinCountText = document.querySelector("#pinyinCount");
 
     if ("function" !== typeof window.Worker) {
       throw "Your browser doesn't support Web Workers";
@@ -54,16 +56,18 @@
     var thread = new Worker("decipher.js");
     thread.onmessage = function (e) {
       [isValid, text, curr_c] = e.data;
+      text = text.trim();
       if (isValid) {
         if (text == "!") {
           document.getElementById("progressContainer").style.display = "none";
         } else {
-          var text2 = text.replaceAll(" ", "");
-          if (deciphered.indexOf(text2) < 0) {
-            deciphered.push(text2);
-            foundCount++;
-            foundCountArea.innerHTML = foundCount;
-            resultDiv.innerHTML += text + "<br>";
+          if (pinyinCount < 0 || text.split(" ").length <= pinyinCount) {
+            if (deciphered.indexOf(text) < 0) {
+              deciphered.push(text);
+              foundCount++;
+              foundCountArea.innerHTML = foundCount;
+              resultDiv.innerHTML += text + "<br>";
+            }
           }
         }
       }
@@ -83,6 +87,7 @@
     var deciphered = [];
     var fastSearchStartIndex, fastSearchEndIndex;
     let time_start;
+    let pinyinCount = -1;
 
     function start() {
       document.getElementById("progressContainer").style.display = "block";
@@ -90,6 +95,12 @@
       count = 0;
       foundCount = 0;
       deciphered = [];
+      if (pinyinCountText.value?.length > 0) {
+        pinyinCount = parseInt(pinyinCountText.value);
+      }
+      else {
+        pinyinCount = -1;
+      }
       resultDiv.innerHTML = "";
       progressArea.innerHTML = count;
       foundCountArea.innerHTML = foundCount;

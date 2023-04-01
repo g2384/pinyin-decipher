@@ -50,7 +50,7 @@
       throw "Your browser doesn't support Web Workers";
     }
 
-    var thread = new Worker("decipher.js");
+    var thread = new Worker("decipher.js", { type: "module" });
     thread.onmessage = function (e) {
       [isValid, text, curr_c] = e.data;
       if (isValid) {
